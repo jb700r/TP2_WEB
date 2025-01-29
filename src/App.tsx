@@ -1,4 +1,4 @@
-import Acceuil from "./pages/PageAcceuil";
+import Accueil from "./pages/PageAccueil";
 import { Container } from "react-bootstrap";
 import { BrowserRouter, Routes, Route } from "react-router";
 import { BarreNavigation } from "./BarreNavigation";
@@ -11,7 +11,7 @@ function App() {
       <Container>
         <BarreNavigation />
         <Routes>
-          <Route path="/" element={<Acceuil />} />
+          <Route path="/" element={<Accueil />} />
           <Route element={<RoutePrivee />}>
             <Route path="/blackjack" element={<h1>Page BJ</h1>} />
           </Route>

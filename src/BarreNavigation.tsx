@@ -17,12 +17,12 @@ export const BarreNavigation = () => {
               <Navbar.Brand href="/poker">poker</Navbar.Brand>
               <Navbar.Brand href="/keno">keno</Navbar.Brand>
               <Navbar.Brand>
-                <Button onClick={() => logout()}>Deconnection</Button>
+                <Button onClick={() => logout()}>Deconnexion</Button>
               </Navbar.Brand>
             </>
           ) : (
             <Navbar.Brand>
-              <Button onClick={() => loginWithRedirect()}>Connection</Button>
+              <Button onClick={() => loginWithRedirect()}>Connexion</Button>
             </Navbar.Brand>
           )}
         </Nav>
