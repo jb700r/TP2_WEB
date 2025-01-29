@@ -1,5 +1,5 @@
 export interface ICarte {
-    value: number;
+    value: string;
     suit: string;
     image: string;
     picked: boolean;

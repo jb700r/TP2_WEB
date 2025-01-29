@@ -26,6 +26,7 @@ export function ChoixUsager(props: ChoixUsagerProps) {
               onChange={(e) => props.setMise(Number(e.target.value))}
               min="0"
               placeholder="0"
+              disabled={props.jeuDemarre}
             />
           </InputGroup>
         </Col>
