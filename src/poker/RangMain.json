@@ -1,0 +1,39 @@
+[
+    {
+      "nom": "ROYAL FLUSH",
+      "paiement": 250
+    },
+    {
+      "nom": "STRAIGHT FLUSH",
+      "paiement": 50
+    },
+    {
+      "nom": "FOUR OF A KIND",
+      "paiement": 25
+    },
+    {
+      "nom": "FULL HOUSE",
+      "paiement": 9
+    },
+    {
+      "nom": "FLUSH",
+      "paiement": 6
+    },
+    {
+      "nom": "STRAIGHT",
+      "paiement": 4
+    },
+    {
+      "nom": "THREE OF A KIND",
+      "paiement": 3
+    },
+    {
+      "nom": "TWO PAIR",
+      "paiement": 2
+    },
+    {
+      "nom": "JACKS OR BETTER",
+      "paiement": 1
+    }
+  ]
+  

@@ -40,3 +40,17 @@
 .read-the-docs {
   color: #888;
 }
+
+.carte-img {
+  width: 150px;
+  height: auto;
+}
+
+.carte {
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.carte.picked {
+  transform: translateY(-10px);
+}
