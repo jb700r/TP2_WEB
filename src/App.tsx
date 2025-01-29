@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import { BarreNavigation } from "./BarreNavigation";
 import { Page404 } from "./pages/Page404";
 import { RoutePrivee } from "./RoutePrivee";
+import { Blackjack } from "./blackjack/Blackjack";
+import { VideoPokerJeu } from "./poker/VideoPokerJeu";
 
 function App() {
   return (
@@ -13,10 +15,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Accueil />} />
           <Route element={<RoutePrivee />}>
-            <Route path="/blackjack" element={<h1>Page BJ</h1>} />
+            <Route path="/blackjack" element={<Blackjack />} />
           </Route>
           <Route element={<RoutePrivee />}>
-            <Route path="/poker" element={<h1>Page Poker</h1>} />
+            <Route path="/poker" element={<VideoPokerJeu />} />
           </Route>
           <Route element={<RoutePrivee />}>
             <Route path="/keno" element={<h1>Page Keno</h1>} />
