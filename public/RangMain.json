@@ -1,11 +1,11 @@
 [
     {
       "nom": "ROYAL FLUSH",
-      "paiement": 250
+      "paiement": 800
     },
     {
       "nom": "STRAIGHT FLUSH",
-      "paiement": 50
+      "paiement": 90
     },
     {
       "nom": "FOUR OF A KIND",

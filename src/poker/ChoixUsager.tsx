@@ -12,6 +12,7 @@ interface ChoixUsagerProps {
   jeuDemarre: boolean;
   setJeuDemarre: () => void;
   setMise: (mise: number) => void;
+  pigerCartes: () => void;
 }
 
 export function ChoixUsager(props: ChoixUsagerProps) {
@@ -37,6 +38,7 @@ export function ChoixUsager(props: ChoixUsagerProps) {
           <Button
             variant="primary"
             className="w-100"
+            onClick={props.pigerCartes}
             disabled={!props.jeuDemarre}
           >
             Piger nouvelles cartes
