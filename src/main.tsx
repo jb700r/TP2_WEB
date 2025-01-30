@@ -5,6 +5,8 @@ import App from "./App.tsx";
 import "./App.css";
 import { Auth0Provider } from "@auth0/auth0-react";
 
+
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Auth0Provider
@@ -14,7 +16,7 @@ createRoot(document.getElementById("root")!).render(
         redirect_uri: window.location.origin,
       }}
     >
-      <App />
+      <App/>
     </Auth0Provider>
   </StrictMode>
 );

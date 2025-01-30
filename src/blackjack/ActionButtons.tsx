@@ -18,6 +18,8 @@ interface ActionBoutonProps {
   hit: () => void;
 }
 
+
+
 export function ActionButtons(props: ActionBoutonProps) {
   return (
     <>
@@ -48,7 +50,7 @@ export function ActionButtons(props: ActionBoutonProps) {
       </div>
       <div>
         <Button onClick={() => props.initPartie()}>Reset</Button>
-        <h1>{EnumWinner[props.winner]}</h1>
+        <h1>{props.winner == EnumWinner.Joueur ? 'You won' : 'You lost'}</h1>
       </div>
     </>
   );

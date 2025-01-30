@@ -1,17 +1,34 @@
 import { useState } from "react";
-import { Button } from "react-bootstrap";
-
+import { Button,InputGroup,Form } from "react-bootstrap";
 import EnumWinner from "./EnumWinner";
 import ICarteData from "./ICarteData";
 import { ActionButtons } from "./ActionButtons";
 import { calculateScore, tirerCarte } from "./BlackJackUtils";
+import "./css/Blackjack.css";
 
-export function Blackjack() {
+interface IBalanceData {
+  balance: number;
+  setBalance: (value: number) => void;
+}
+
+
+export function Blackjack(props: IBalanceData) {
   const [jeuDeCarteId, setJeuDeCarteId] = useState<string>();
   const [cartesCroupier, setCartesCroupier] = useState<ICarteData[]>([]);
   const [cartesJoueur, setCartesJoueur] = useState<ICarteData[]>([]);
   const [carteCaché, setCarteCaché] = useState<boolean>(false);
   const [winner, setWinner] = useState<EnumWinner>(EnumWinner.null);
+
+  const fetchBalance = () => {
+    return props.balance;
+  }
+
+  const setBalance = (value: number) => {
+    props.setBalance(value);
+  }
+
+  
+
 
   const scoreMax: number = 21;
 
@@ -61,10 +78,13 @@ export function Blackjack() {
       console.log("scoreJoueur:", scoreJoueur);
     }
     if (scoreCroupier > scoreMax) {
+      setBalance(fetchBalance()+(mise*2));
       setWinner(EnumWinner.Joueur);
     } else if (scoreJoueur > scoreCroupier && scoreJoueur <= scoreMax) {
+      setBalance(fetchBalance()+(mise*2));
       setWinner(EnumWinner.Joueur);
     } else if (scoreCroupier >= 17 && scoreJoueur === scoreCroupier) {
+      setBalance(fetchBalance()+(mise));
       setWinner(EnumWinner.Egalité);
     } else {
       setWinner(EnumWinner.Croupier);
@@ -101,6 +121,9 @@ export function Blackjack() {
       btn!.style.display = "none";
       const newCartesCroupier: ICarteData[] = [];
       const newCartesJoueur: ICarteData[] = [];
+
+      setBalance(fetchBalance()-(mise));
+
       for (let i = 0; i < 2; i++) {
         const carteCroupier = await tirerCarte(jeuDeCarteId);
         newCartesCroupier.push(carteCroupier);
@@ -118,13 +141,19 @@ export function Blackjack() {
     }
   }
 
+
+  const [mise, setMise] = useState<number>(0);
   return (
     <>
-      <div>
-        <h1>Blackjack</h1>
+      <div id="bj">
+        <h1>Blackjack</h1><br></br>
+      <InputGroup className="mb-3 w-25 mx-auto" >
+        <InputGroup.Text>$</InputGroup.Text>
+        <Form.Control id="mise" type="number" onChange={(e) => {setMise(Number(e.currentTarget.value))}} aria-label="Entrez votre mise" />
+      </InputGroup>
         <Button
           id="demarrer-partie"
-          onClick={async () => {
+          onClick={ () => {
             initPartie();
           }}
         >
@@ -136,12 +165,14 @@ export function Blackjack() {
             <div>
               {cartesCroupier.map((carte, index) =>
                 index === 0 ? (
-                  <img key={index} src={carte.image} alt={carte.value} />
+                  <img key={index} src={carte.image} alt={carte.value} height={"auto"} width={'150px'} className="mx-2"/>
                 ) : (
                   <img
                     key={index}
                     src={carteCaché ? carte.image : dosCarte}
                     alt={carteCaché ? carte.value : "Hidden Card"}
+                    height={"auto"} width={'150px'}
+                    className="mx-2"
                   />
                 )
               )}
@@ -153,7 +184,7 @@ export function Blackjack() {
             <h2>Joueur</h2>
             <div>
               {cartesJoueur.map((carte, index) => (
-                <img key={index} src={carte.image} alt={carte.value} />
+                <img key={index} src={carte.image} alt={carte.value} height={"auto"} width={'150px'} className="mx-2"/>
               ))}
             </div>
             <p>Score: {calculateScore(cartesJoueur)}</p>
