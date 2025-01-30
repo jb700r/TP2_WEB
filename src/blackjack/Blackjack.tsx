@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 
-import enumWinner from "./EnumWinner";
+import EnumWinner from "./EnumWinner";
 import ICarteData from "./ICarteData";
 import { ActionButtons } from "./ActionButtons";
 import { calculateScore, tirerCarte } from "./BlackJackUtils";
@@ -11,7 +11,7 @@ export function Blackjack() {
   const [cartesCroupier, setCartesCroupier] = useState<ICarteData[]>([]);
   const [cartesJoueur, setCartesJoueur] = useState<ICarteData[]>([]);
   const [carteCaché, setCarteCaché] = useState<boolean>(false);
-  const [winner, setWinner] = useState<enumWinner>(enumWinner.null);
+  const [winner, setWinner] = useState<EnumWinner>(EnumWinner.null);
 
   const scoreMax: number = 21;
 
@@ -45,9 +45,51 @@ export function Blackjack() {
       .catch((error) => console.error(error));
   }
 
+  async function Stay() {
+    setCarteCaché(true);
+    let carteActuelle = [...cartesCroupier];
+    let scoreCroupier = calculateScore(carteActuelle);
+
+    while (scoreCroupier < 17 && jeuDeCarteId && winner == EnumWinner.null) {
+      const newCard = await tirerCarte(jeuDeCarteId);
+      carteActuelle.push(newCard);
+      scoreCroupier = calculateScore(carteActuelle);
+
+      setCartesCroupier([...carteActuelle]);
+
+      console.log("scoreCroupier:", scoreCroupier);
+      console.log("scoreJoueur:", scoreJoueur);
+    }
+    if (scoreCroupier > scoreMax) {
+      setWinner(EnumWinner.Joueur);
+    } else if (scoreJoueur > scoreCroupier && scoreJoueur <= scoreMax) {
+      setWinner(EnumWinner.Joueur);
+    } else if (scoreCroupier >= 17 && scoreJoueur === scoreCroupier) {
+      setWinner(EnumWinner.Egalité);
+    } else {
+      setWinner(EnumWinner.Croupier);
+    }
+  }
+
+  async function hit() {
+    let carteActuelle = [...cartesJoueur];
+    let scoreJoueur = calculateScore(carteActuelle);
+
+    if (jeuDeCarteId && winner == EnumWinner.null) {
+      const nouvelleCarte = await tirerCarte(jeuDeCarteId);
+      carteActuelle.push(nouvelleCarte);
+      scoreJoueur = calculateScore(carteActuelle);
+
+      await setCartesJoueur([...carteActuelle]);
+      if (scoreJoueur > scoreMax) {
+        setWinner(EnumWinner.Croupier);
+      }
+    }
+  }
+
   async function initPartie() {
     setCarteCaché(false);
-    setWinner(enumWinner.null);
+    setWinner(EnumWinner.null);
     setCartesCroupier([]);
     setCartesJoueur([]);
 
@@ -129,6 +171,8 @@ export function Blackjack() {
               setCarteCaché={setCarteCaché}
               setWinner={setWinner}
               initPartie={initPartie}
+              stay={Stay}
+              hit={hit}
             />
           )}
         </div>

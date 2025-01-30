@@ -1,7 +1,6 @@
 import ICarteData from "./ICarteData";
 
 
-
 export function calculateScore(cartes: ICarteData[]): number {
     let score = 0;
     let aceCount = 0;
@@ -40,3 +39,5 @@ export async function tirerCarte(jeuDeCarteId: string): Promise<ICarteData> {
       throw error;
     }
   }
+
+ 
