@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Table } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export function RangMain() {
-  const [rangs, setRangs] = useState<{ nom: string; paiement: number }[] | null>(null);
+interface RangMainProps {
+  rangs: { nom: string; paiement: number }[] | null;
+  valeurMain: number;
+  compteAction: number; // Nombre de fois que le tableau est affiché
+}
 
-  useEffect(() => {
-    fetch("RangMain.json")
-      .then((response) => response.json())
-      .then((data) => setRangs(data))
-      .catch((error) => console.error("Erreur lors du chargement du fichier JSON:", error));
-  }, []);
-
-  if (!rangs) {
-    return <p>Chargement des données...</p>;
+export function RangMain(props: RangMainProps) {
+  if (!props.rangs) {
+    return null;
   }
 
   return (
@@ -28,12 +24,24 @@ export function RangMain() {
               </tr>
             </thead>
             <tbody>
-              {rangs.map((rang, index) => (
-                <tr key={index}>
-                  <td>{rang.nom}</td>
-                  <td>{rang.paiement}</td>
-                </tr>
-              ))}
+              {props.rangs.map((rang) => {
+                let highlightClass = "";
+                if (rang.paiement === props.valeurMain) {
+                  if (props.compteAction === 1) {
+                    highlightClass = "table-warning";
+                  } else if (props.compteAction === 2) {
+                    highlightClass = "table-primary";
+                  }
+                }
+
+
+                return (
+                  <tr key={rang.paiement} className={highlightClass}>
+                    <td>{rang.nom}</td>
+                    <td>{rang.paiement}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </Col>

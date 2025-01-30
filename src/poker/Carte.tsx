@@ -11,9 +11,7 @@ interface CarteProps {
     jeuDemarre: boolean;
 }
 
-export function Carte(props: CarteProps) {
-  console.log(props.jeuDemarre); 
-  
+export function Carte(props: CarteProps) {  
   return (
     <img
       src={props.carte.image}

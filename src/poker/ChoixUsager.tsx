@@ -41,7 +41,7 @@ export function ChoixUsager(props: ChoixUsagerProps) {
             onClick={props.pigerCartes}
             disabled={!props.jeuDemarre}
           >
-            Piger nouvelles cartes
+            Prochaine ronde
           </Button>
         </Col>
 
