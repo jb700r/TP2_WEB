@@ -1,7 +1,6 @@
 import { Button } from "react-bootstrap";
 import EnumWinner from "./EnumWinner";
 import ICarteData from "./ICarteData";
-import { calculateScore, tirerCarte } from "./BlackJackUtils";
 
 interface ActionBoutonProps {
   winner: EnumWinner;
@@ -15,7 +14,11 @@ interface ActionBoutonProps {
   setCarteCaché: (carteCaché: boolean) => void;
   setWinner: (winner: EnumWinner) => void;
   initPartie: () => void;
+  stay: () => void;
+  hit: () => void;
 }
+
+
 
 export function ActionButtons(props: ActionBoutonProps) {
   return (
@@ -30,19 +33,7 @@ export function ActionButtons(props: ActionBoutonProps) {
               : "m-4 "
           }
           onClick={async () => {
-            let carteActuelle = [...props.cartesJoueur];
-            let scoreJoueur = calculateScore(carteActuelle);
-
-            if (props.jeuDeCarteId && props.winner == EnumWinner.null) {
-              const nouvelleCarte = await tirerCarte(props.jeuDeCarteId);
-              carteActuelle.push(nouvelleCarte);
-              scoreJoueur = calculateScore(carteActuelle);
-
-              await props.setCartesJoueur([...carteActuelle]);
-              if (scoreJoueur > props.scoreMax) {
-                props.setWinner(EnumWinner.Croupier);
-              }
-            }
+            props.hit();
           }}
         >
           Hit
@@ -51,39 +42,7 @@ export function ActionButtons(props: ActionBoutonProps) {
           variant="danger"
           className={props.winner != EnumWinner.null ? "m-4 disabled" : "m-4 "}
           onClick={async () => {
-            props.setCarteCaché(true);
-            let carteActuelle = [...props.cartesCroupier];
-            let scoreCroupier = calculateScore(carteActuelle);
-
-            while (
-              scoreCroupier < 17 &&
-              props.jeuDeCarteId &&
-              props.winner == EnumWinner.null
-            ) {
-              const newCard = await tirerCarte(props.jeuDeCarteId);
-              carteActuelle.push(newCard);
-              scoreCroupier = calculateScore(carteActuelle);
-
-              props.setCartesCroupier([...carteActuelle]);
-
-              console.log("scoreCroupier:", scoreCroupier);
-              console.log("scoreJoueur:", props.scoreJoueur);
-            }
-            if (scoreCroupier > props.scoreMax) {
-              props.setWinner(EnumWinner.Joueur);
-            } else if (
-              props.scoreJoueur > scoreCroupier &&
-              props.scoreJoueur <= props.scoreMax
-            ) {
-              props.setWinner(EnumWinner.Joueur);
-            } else if (
-              scoreCroupier >= 17 &&
-              props.scoreJoueur === scoreCroupier
-            ) {
-              props.setWinner(EnumWinner.Egalité);
-            } else {
-              props.setWinner(EnumWinner.Croupier);
-            }
+            props.stay();
           }}
         >
           Stay
@@ -91,7 +50,7 @@ export function ActionButtons(props: ActionBoutonProps) {
       </div>
       <div>
         <Button onClick={() => props.initPartie()}>Reset</Button>
-        <h1>{EnumWinner[props.winner]}</h1>
+        <h1>{props.winner == EnumWinner.Joueur ? 'You won' : 'You lost'}</h1>
       </div>
     </>
   );

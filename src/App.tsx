@@ -6,16 +6,23 @@ import { Page404 } from "./pages/Page404";
 import { RoutePrivee } from "./RoutePrivee";
 import { Blackjack } from "./blackjack/Blackjack";
 import { VideoPoker} from "./poker/VideoPoker";
+import { useState } from "react";
 
 function App() {
+  const [accountAmount, setAccountAmount] = useState<number>(() => {
+    const savedAmount = localStorage.getItem("accountAmount");
+    return savedAmount ? JSON.parse(savedAmount) : 100;}
+  );
+  localStorage.setItem("accountAmount", JSON.stringify(accountAmount));
+
   return (
     <BrowserRouter>
       <Container>
-        <BarreNavigation />
+        <BarreNavigation accountAmount={accountAmount} setAccountAmount={setAccountAmount} />
         <Routes>
           <Route path="/" element={<Accueil />} />
           <Route element={<RoutePrivee />}>
-            <Route path="/blackjack" element={<Blackjack />} />
+            <Route path="/blackjack" element={<Blackjack balance={accountAmount} setBalance={setAccountAmount} />} />
           </Route>
           <Route element={<RoutePrivee />}>
             <Route path="/poker" element={<VideoPoker />} />
