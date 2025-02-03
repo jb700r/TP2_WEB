@@ -52,7 +52,6 @@ export function VideoPoker() {
       `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=5`
     );
     const resultatJson = await resultat.json();
-    console.log(resultatJson);
     const cardArray: ICarte[] = [];
     resultatJson.cards.map(
       (card: { value: string; suit: string; image: string }) => {
@@ -61,47 +60,58 @@ export function VideoPoker() {
           suit: card.suit,
           image: card.image,
           picked: false,
+          paid: false,
         };
         cardArray.push(newCarte);
       }
     );
     setMain(cardArray);
-    const value = verifierMain(cardArray);
+    const value = verifierMain(cardArray, setMain);
     setValeurMainActuelle(value);
     setCompteAction(1);
   }
 
   async function pigerSecondeCartes() {
+    setJeuDemarre(false);
     if (main) {
       const newMain = [...main];
 
-      for (let index = 0; index < newMain.length; index++) {
-        const carte = newMain[index];
-
-        if (!carte.picked) {
-          const resultat = await fetch(
-            `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`
-          );
-          const resultatJson = await resultat.json();
-          const newCard = resultatJson.cards[0];
-
-          newMain[index] = {
-            value: newCard.value,
-            suit: newCard.suit,
-            image: newCard.image,
-            picked: false,
-          };
-        } else {
-          newMain[index] = { ...carte, picked: !carte.picked };
+      const cartesAPiger = newMain.filter((carte) => !carte.picked).length;
+  
+      if (cartesAPiger > 0) {
+        const resultat = await fetch(
+          `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=${cartesAPiger}`
+        );
+        const resultatJson = await resultat.json();
+        const nouvellesCartes = resultatJson.cards;
+  
+        let indexNouvelleCarte = 0;
+        for (let index = 0; index < newMain.length; index++) {
+          if (!newMain[index].picked) {
+            const newCard = nouvellesCartes[indexNouvelleCarte++];
+            newMain[index] = {
+              value: newCard.value,
+              suit: newCard.suit,
+              image: newCard.image,
+              picked: false,
+              paid: false,
+            };
+          } else {
+            newMain[index] = { ...newMain[index], picked: !newMain[index].picked };
+          }
+        }
+      } else {
+        for (let index = 0; index < newMain.length; index++) {
+          newMain[index] = { ...newMain[index], picked: !newMain[index].picked };
         }
       }
       setMain(newMain);
-      const value = verifierMain(newMain);
+      const value = verifierMain(newMain, setMain);
       setValeurMainActuelle(value);
       setCompteAction(2);
     }
-    setJeuDemarre(false);
   }
+  
 
   function ToggleCarteSelectionnee(index: number) {
     if (main) {
@@ -113,12 +123,17 @@ export function VideoPoker() {
 
   return (
     <>
-      <RangMain rangs={rangs} valeurMain={valeurMainActuelle} compteAction={compteAction}/>
+      <RangMain
+        rangs={rangs}
+        valeurMain={valeurMainActuelle}
+        compteAction={compteAction}
+      />
       <MainPoker
         cartes={main}
         imageDos={dosCarteImage}
         carteCliquee={ToggleCarteSelectionnee}
         jeuDemarre={jeuDemarre}
+        compteAction={compteAction}
       />
       <ChoixUsager
         jeuDemarre={jeuDemarre}

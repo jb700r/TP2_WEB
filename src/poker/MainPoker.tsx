@@ -8,6 +8,7 @@ interface MainPokerProps {
   imageDos: string | null;
   carteCliquee: (index: number) => void;
   jeuDemarre : boolean;
+  compteAction : number;
 }
 
 export function MainPoker(props: MainPokerProps) {
@@ -17,7 +18,7 @@ export function MainPoker(props: MainPokerProps) {
         {(props.cartes
           ? props.cartes.map((carte, index) => (
               <Col key={index} className="col-auto">
-                <Carte carte={carte} onClick={() => props.carteCliquee(index)} jeuDemarre={props.jeuDemarre} />
+                <Carte carte={carte} onClick={() => props.carteCliquee(index)} jeuDemarre={props.jeuDemarre} compteAction={props.compteAction}/>
               </Col>
             ))
           : Array.from({ length: 5 }).map((_, index) => (

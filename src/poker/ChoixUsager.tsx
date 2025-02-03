@@ -16,6 +16,7 @@ interface ChoixUsagerProps {
 }
 
 export function ChoixUsager(props: ChoixUsagerProps) {
+
   return (
     <Container className="mt-4">
       <Row className="mb-3 justify-content-center">
