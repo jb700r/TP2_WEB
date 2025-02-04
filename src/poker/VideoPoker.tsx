@@ -4,8 +4,14 @@ import { MainPoker } from "./MainPoker";
 import { ChoixUsager } from "./ChoixUsager";
 import { RangMain } from "./RangMain";
 import { verifierMain } from "./VerifierMain";
+import { Info } from "./Info";
 
-export function VideoPoker() {
+interface VideoPokerProps {
+  balance: number;
+  setBalance: (value: number) => void;
+}
+
+export function VideoPoker(props: VideoPokerProps) {
   const [deckId, setDeckId] = useState<string | null>(null);
   const [main, setMain] = useState<ICarte[] | null>(null);
   const [totalMise, setTotalMise] = useState<number>(0);
@@ -15,6 +21,9 @@ export function VideoPoker() {
   >(null);
   const [valeurMainActuelle, setValeurMainActuelle] = useState<number>(0);
   const [compteAction, setCompteAction] = useState<number>(0);
+  const [infoTexte, setInfoTexte] = useState<string>("");
+  const [infovisible, setInfoVisible] = useState<boolean>(false);
+  const [infoErreur, setInfoErreur] = useState<boolean>(false);
 
   useEffect(() => {
     fetch("RangMain.json")
@@ -29,8 +38,9 @@ export function VideoPoker() {
     "https://deckofcardsapi.com/static/img/back.png";
 
   async function demarrerJeu() {
-    if (totalMise > 0) {
+    if (totalMise > 0 && totalMise <= props.balance) {
       setJeuDemarre(true);
+      props.setBalance(props.balance - totalMise);
 
       if (deckId == null) {
         const resultat = await fetch(
@@ -44,10 +54,15 @@ export function VideoPoker() {
         await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/shuffle/`);
         pigerPremiereCartes(deckId);
       }
+    } else {
+      setInfoTexte("Mise non valide. Veuillez réessayer.");
+      setInfoVisible(true);
+      setInfoErreur(true);
     }
   }
 
   async function pigerPremiereCartes(deckId: string) {
+    setInfoVisible(false);
     const resultat = await fetch(
       `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=5`
     );
@@ -73,18 +88,19 @@ export function VideoPoker() {
 
   async function pigerSecondeCartes() {
     setJeuDemarre(false);
+
     if (main) {
       const newMain = [...main];
 
       const cartesAPiger = newMain.filter((carte) => !carte.picked).length;
-  
+
       if (cartesAPiger > 0) {
         const resultat = await fetch(
           `https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=${cartesAPiger}`
         );
         const resultatJson = await resultat.json();
         const nouvellesCartes = resultatJson.cards;
-  
+
         let indexNouvelleCarte = 0;
         for (let index = 0; index < newMain.length; index++) {
           if (!newMain[index].picked) {
@@ -97,21 +113,34 @@ export function VideoPoker() {
               paid: false,
             };
           } else {
-            newMain[index] = { ...newMain[index], picked: !newMain[index].picked };
+            newMain[index] = {
+              ...newMain[index],
+              picked: !newMain[index].picked,
+            };
           }
         }
       } else {
         for (let index = 0; index < newMain.length; index++) {
-          newMain[index] = { ...newMain[index], picked: !newMain[index].picked };
+          newMain[index] = {
+            ...newMain[index],
+            picked: !newMain[index].picked,
+          };
         }
       }
       setMain(newMain);
       const value = verifierMain(newMain, setMain);
+      props.setBalance(props.balance + totalMise * value);
       setValeurMainActuelle(value);
+
+      if (value != 0) {
+        setInfoTexte("Félicitation! Vous remportez " + totalMise * value + "$");
+        setInfoErreur(false);
+        setInfoVisible(true);
+      }
+
       setCompteAction(2);
     }
   }
-  
 
   function ToggleCarteSelectionnee(index: number) {
     if (main) {
@@ -141,6 +170,8 @@ export function VideoPoker() {
         setMise={setTotalMise}
         pigerCartes={pigerSecondeCartes}
       />
+
+      <Info text={infoTexte} visible={infovisible} error={infoErreur} />
     </>
   );
 }
