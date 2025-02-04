@@ -16,6 +16,7 @@ interface ActionBoutonProps {
   initPartie: () => void;
   stay: () => void;
   hit: () => void;
+  double: () => void;
 }
 
 
@@ -47,10 +48,20 @@ export function ActionButtons(props: ActionBoutonProps) {
         >
           Stay
         </Button>
+        <Button
+          variant="warning"
+          className={props.winner != EnumWinner.null ? "m-4 disabled" : "m-4 "}
+          onClick={async () => {
+            props.double();
+          }}
+        >
+          Double
+        </Button>
       </div>
       <div>
         <Button onClick={() => props.initPartie()}>Reset</Button>
-        <h1>{props.winner == EnumWinner.Joueur ? 'You won' : 'You lost'}</h1>
+        
+        <h1>{EnumWinner[props.winner] == 'null' ? '' : EnumWinner[props.winner]}</h1>
       </div>
     </>
   );
