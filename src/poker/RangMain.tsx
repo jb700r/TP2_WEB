@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 interface RangMainProps {
   rangs: { nom: string; paiement: number }[] | null;
   valeurMain: number;
-  compteAction: number; // Nombre de fois que le tableau est affiché
+  compteAction: number;
 }
 
 export function RangMain(props: RangMainProps) {

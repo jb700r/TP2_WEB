@@ -25,7 +25,7 @@ function App() {
             <Route path="/blackjack" element={<Blackjack balance={accountAmount} setBalance={setAccountAmount} />} />
           </Route>
           <Route element={<RoutePrivee />}>
-            <Route path="/poker" element={<VideoPoker />} />
+            <Route path="/poker" element={<VideoPoker balance={accountAmount} setBalance={setAccountAmount} />} />
           </Route>
           <Route element={<RoutePrivee />}>
             <Route path="/keno" element={<h1>Page Keno</h1>} />
