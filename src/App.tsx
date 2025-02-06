@@ -7,6 +7,7 @@ import { RoutePrivee } from "./RoutePrivee";
 import { Blackjack } from "./blackjack/Blackjack";
 import { VideoPoker} from "./poker/VideoPoker";
 import { useState } from "react";
+import { Keno } from "./keno/Keno";
 
 function App() {
   const [accountAmount, setAccountAmount] = useState<number>(() => {
@@ -28,7 +29,7 @@ function App() {
             <Route path="/poker" element={<VideoPoker balance={accountAmount} setBalance={setAccountAmount} />} />
           </Route>
           <Route element={<RoutePrivee />}>
-            <Route path="/keno" element={<h1>Page Keno</h1>} />
+            <Route path="/keno" element={<Keno/>} />
           </Route>
           <Route path="*" element={<Page404 />} />
         </Routes>
