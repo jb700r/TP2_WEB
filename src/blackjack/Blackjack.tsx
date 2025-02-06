@@ -64,9 +64,9 @@ export function Blackjack(props: IBalanceData) {
     let carteActuelle: ICarteData[] = [...cartesCroupier];
     let scoreCroupier: number = calculateScore(carteActuelle);
 
-    let winnings: number = mise;
+    let winnings: number = mise*2;
 
-    p_isdoubled ? winnings*=4 : winnings*=2;
+    p_isdoubled ? winnings*=2 : winnings;
 
 
     while (scoreCroupier < 17 && jeuDeCarteId && winner == EnumWinner.null) {
