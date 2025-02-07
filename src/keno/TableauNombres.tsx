@@ -1,52 +1,37 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { INombreKeno, NombreKeno } from "./NombreKeno";
 
 interface TableauNombresProps {
-  onclick: (nombre: number) => void;
-  jeuCommence: boolean;
-  maxAtteint: boolean;
+  nombresKeno: INombreKeno[];
+  onClick: (nombre: INombreKeno) => void;
 }
 
 export function TableauNombres(props: TableauNombresProps) {
   const rows = [];
-  let number = 1;
-
-  const handleClick = (value: number, event: React.MouseEvent) => {
-    if (props.jeuCommence) {
-      return;
-    }
-    const tile = event.currentTarget;
-    if (props.maxAtteint && !tile.classList.contains("active")) {
-      return;
-    }
-    tile.classList.toggle("active");
-    props.onclick(value);
-  };
-
   for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
     const cols = [];
+
     for (let colIndex = 0; colIndex < 8; colIndex++) {
-      const value = number;
-      cols.push(
-        <Col
-          key={value}
-          xs={4}
-          sm={3}
-          md={2}
-          lg={1}
-          className="tile m-2"
-          onClick={(event) => handleClick(value, event)}
-        >
-          {number}
-        </Col>
-      );
-      number++;
+      const index = rowIndex * 8 + colIndex;
+      const nombre = props.nombresKeno[index];
+
+      if (nombre) {
+        cols.push(
+          <NombreKeno
+            key={nombre.value}
+            nombre={nombre}
+            onClick={() => props.onClick(nombre)}
+          />
+        );
+      }
     }
+
     rows.push(
       <Row
         key={rowIndex}
-        className="mt-2 mb-2 justify-content-center"
-        style={{ flexWrap: "wrap" }}
+        className="justify-content-center"
+        style={{ gap: "8px" }}
       >
         {cols}
       </Row>

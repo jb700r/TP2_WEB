@@ -71,8 +71,8 @@
   color: white;
   border-radius: 8px; 
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100px; 
-  height: 100px; 
+  width: 80px; 
+  height: 80px; 
   margin-right: 10px;
   display: flex;
   justify-content: center;
@@ -98,4 +98,19 @@
 }
 .tile.active:hover {
   background-color: #b864fc;
+}
+
+.tile.winner {
+  background-color: green !important;
+}
+
+.tile.loser {
+  background-color: red !important;
+}
+
+.custom-success {
+  background-color: #1e7e34 !important; 
+  color: white !important;
+  border-color: #155724 !important;
+  transition: background-color 0.3s ease;
 }
