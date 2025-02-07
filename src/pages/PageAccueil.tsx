@@ -6,7 +6,7 @@ function Accueil() {
 
   return (
     <Container className="mt-4">
-      <h1 className="text-center mb-4">Bienvenue sur Skibid Casino 🎲</h1>
+      <h1 className="text-center mb-4">Bienvenue sur Skibidi Casino 🎲</h1>
 
       {isAuthenticated ? (
         <p className="text-center">
