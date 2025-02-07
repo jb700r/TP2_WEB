@@ -17,7 +17,6 @@ export function Blackjack(props: IBalanceData) {
   const [cartesJoueur, setCartesJoueur] = useState<ICarteData[]>([]);
   const [carteCaché, setCarteCaché] = useState<boolean>(false);
   const [winner, setWinner] = useState<EnumWinner>(EnumWinner.null);
-  const [isDoubled,setIsDoubled] = useState<boolean>(false);
 
   // const fetchBalance = () => {
   //   return props.balance;
@@ -109,11 +108,11 @@ export function Blackjack(props: IBalanceData) {
     }
   }
 
-  async function double() {
-    setBalance(props.balance - mise);
-    await hit();
-    await Stay(true);
-  }
+  // async function double() {
+  //   setBalance(props.balance - mise);
+  //   await hit();
+  //   await Stay(true);
+  // }
 
 
 
@@ -241,7 +240,7 @@ export function Blackjack(props: IBalanceData) {
               initPartie={initPartie}
               stay={Stay}
               hit={hit}
-              double={double}
+              mise={mise}
             />
           )}
         </div>
