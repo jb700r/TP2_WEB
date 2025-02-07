@@ -37,7 +37,7 @@ export function BarreNavigation(props: INavigationProps) {
                 variant="success mr-2"
                 onClick={handleClick}
               >
-                <span className="font-semibold">Amount: ${props.accountAmount}</span>
+                <span className="font-semibold">Balance: ${props.accountAmount.toFixed(2)}</span>
                 <Plus className="ml-2" />
               </Button>
               <Button variant="primary" onClick={() => logout()}>

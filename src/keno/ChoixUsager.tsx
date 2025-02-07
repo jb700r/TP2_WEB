@@ -6,6 +6,7 @@ import {
   Row,
   Col,
   FormSelect,
+  FormLabel,
 } from "react-bootstrap";
 
 interface ChoixUsagerProps {
@@ -13,14 +14,16 @@ interface ChoixUsagerProps {
   setJeu: () => void;
   jeuDemarre: boolean;
   setDifficulte: (value: string) => void;
-  setNombreWinner : (value : number) =>void;
+  setNombreWinner: (value: number) => void;
 }
+
 export function ChoixUsager(props: ChoixUsagerProps) {
   return (
     <Container className="mt-4">
-      <Row className="mb-2 justify-content-center">
+      <Row className="mb-3 justify-content-center">
         <Col md={3}>
-          <InputGroup className="mb-3">
+          <FormLabel>Mise</FormLabel>
+          <InputGroup>
             <InputGroup.Text>$</InputGroup.Text>
             <FormControl
               type="number"
@@ -31,11 +34,14 @@ export function ChoixUsager(props: ChoixUsagerProps) {
             />
           </InputGroup>
         </Col>
+
         <Col md={3}>
+          <FormLabel>Difficulté</FormLabel> 
           <FormSelect
-            onChange={(e) => {props.setDifficulte(e.target.value);
-              props.setNombreWinner(0)}
-            }
+            onChange={(e) => {
+              props.setDifficulte(e.target.value);
+              props.setNombreWinner(Infinity);
+            }}
             disabled={props.jeuDemarre}
             defaultValue="low"
           >
@@ -45,6 +51,7 @@ export function ChoixUsager(props: ChoixUsagerProps) {
           </FormSelect>
         </Col>
       </Row>
+
       <Button
         variant="primary"
         onClick={props.setJeu}

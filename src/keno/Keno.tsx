@@ -4,6 +4,7 @@ import { ChoixUsager } from "./ChoixUsager";
 import { Info } from "../poker/Info";
 import { INombreKeno } from "./NombreKeno";
 import { TableauPaiement } from "./TableauPaiement";
+import { low, medium, high } from "./Data";
 
 interface KenoProps {
   balance: number;
@@ -26,7 +27,7 @@ export function Keno(props: KenoProps) {
   const [infoErreur, setInfoErreur] = useState<boolean>(false);
   const [difficulte, setDifficulte] = useState<string>("low");
   const [nombreChiffreChoisi, setNombreChiffreChoisi] = useState<number>(0);
-  const [nombreWinner, setNombreWinner] = useState<number>(0);
+  const [nombreWinner, setNombreWinner] = useState<number>(Infinity);
 
   function resetClasses(keno: INombreKeno[]) {
     return keno.map((n) => ({
@@ -42,7 +43,7 @@ export function Keno(props: KenoProps) {
         props.setBalance(props.balance - mise);
         setJeuDemarre(true);
         setInfoVisible(false);
-        setNombreWinner(0);
+        setNombreWinner(Infinity);
         const tableauReset = resetClasses(nombresKeno);
         setNombresKeno(tableauReset);
 
@@ -99,6 +100,23 @@ export function Keno(props: KenoProps) {
     const countWinners = updatedKeno.filter(
       (n) => n.isSelected && n.className === "winner"
     ).length;
+
+    let data;
+    if (difficulte === "low") {
+      data = low;
+    } else if (difficulte === "medium") {
+      data = medium;
+    } else if (difficulte === "high") {
+      data = high;
+    }
+    console.log("winner:" + countWinners);
+
+    console.log("data:" + data[nombreChiffreChoisi][countWinners]);
+
+    props.setBalance((prevBalance) => prevBalance + (mise * data[nombreChiffreChoisi][countWinners]));
+
+    console.log("props balance" + props.balance)
+
     setJeuDemarre(false);
     setNombreWinner(countWinners);
   }
@@ -109,7 +127,7 @@ export function Keno(props: KenoProps) {
       afficherMessage("Attendez la prochaine partie!", true);
       return;
     }
-    setNombreWinner(0);
+    setNombreWinner(Infinity);
     const resetKeno = resetClasses(nombresKeno);
 
     const updatedKeno = resetKeno.map((n) =>
@@ -153,7 +171,6 @@ export function Keno(props: KenoProps) {
         difficulte={difficulte}
         nombreChiffreChoisi={nombreChiffreChoisi}
         nombreWinner={nombreWinner}
-
       />
     </>
   );

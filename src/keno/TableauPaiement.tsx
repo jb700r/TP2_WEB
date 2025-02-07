@@ -23,7 +23,7 @@ export function TableauPaiement(props: TableauPaiementProps) {
   const nombreRow = [];
   const payoutRow = [];
 
-  for (let i = 1; i <= nombreChiffreChoisi; i++) {
+  for (let i = 0; i <= nombreChiffreChoisi; i++) {
     const isWinner = i === nombreWinner;
 
     nombreRow.push(
@@ -40,7 +40,7 @@ export function TableauPaiement(props: TableauPaiementProps) {
         key={`payout-${i}`}
         className={`text-center ${isWinner ? "custom-success" : ""}`}
       >
-        {data?.[nombreChiffreChoisi]?.[i] !== undefined
+        {data && data[nombreChiffreChoisi] && data[nombreChiffreChoisi][i] !== undefined
           ? data[nombreChiffreChoisi][i]
           : "0"}
       </td>
