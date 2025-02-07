@@ -29,7 +29,7 @@ function App() {
             <Route path="/poker" element={<VideoPoker balance={accountAmount} setBalance={setAccountAmount} />} />
           </Route>
           <Route element={<RoutePrivee />}>
-            <Route path="/keno" element={<Keno/>} />
+            <Route path="/keno" element={<Keno balance={accountAmount} setBalance={setAccountAmount}/>} />
           </Route>
           <Route path="*" element={<Page404 />} />
         </Routes>

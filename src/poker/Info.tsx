@@ -10,7 +10,7 @@ interface InfoProps {
     if (!props.visible) return null;
   
     return (
-      <div className={props.error ? "text-danger" : "text-success"}>
+      <div className={`mt-3 ${props.error ? "text-danger" : "text-success"}`}>
         <h5>{props.text}</h5>
       </div>
     );

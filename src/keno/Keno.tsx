@@ -1,45 +1,160 @@
 import { useState } from "react";
 import { TableauNombres } from "./TableauNombres";
 import { ChoixUsager } from "./ChoixUsager";
+import { Info } from "../poker/Info";
+import { INombreKeno } from "./NombreKeno";
+import { TableauPaiement } from "./TableauPaiement";
 
-export function Keno() {
-  const [chiffresChoisisActuellement, setChiffresChoisisActuellement] = useState<number[]>([]);
-  const [jeuCommence, setJeuCommence] = useState<boolean>(false);
-  const [maxAtteint, setMaxAtteint] = useState<boolean>(false);
+interface KenoProps {
+  balance: number;
+  setBalance: (value: number) => void;
+}
+
+export function Keno(props: KenoProps) {
+  const [nombresKeno, setNombresKeno] = useState<INombreKeno[]>(() => {
+    return Array.from({ length: 40 }, (_, i) => ({
+      value: i + 1,
+      isSelected: false,
+      className: "",
+    }));
+  });
+
+  const [jeuDemarre, setJeuDemarre] = useState<boolean>(false);
   const [mise, setMise] = useState<number>(0);
+  const [infoTexte, setInfoTexte] = useState<string>("");
+  const [infovisible, setInfoVisible] = useState<boolean>(false);
+  const [infoErreur, setInfoErreur] = useState<boolean>(false);
+  const [difficulte, setDifficulte] = useState<string>("low");
+  const [nombreChiffreChoisi, setNombreChiffreChoisi] = useState<number>(0);
+  const [nombreWinner, setNombreWinner] = useState<number>(0);
 
-    function demarrerJeu()
-    {
-        setJeuCommence(true);
-    }
+  function resetClasses(keno: INombreKeno[]) {
+    return keno.map((n) => ({
+      ...n,
+      className: n.isSelected ? "active" : "",
+    }));
+  }
 
-  function toggleNombreListe(nombre: number) {
-    setChiffresChoisisActuellement((prevChiffres) => {
-      if (prevChiffres.length >= 10 && !prevChiffres.includes(nombre)) {
-        setMaxAtteint(true);
-        return prevChiffres;
-      }
+  function demarrerJeu() {
+    const nombresSelectionnes = nombresKeno.filter((n) => n.isSelected);
+    if (mise > 0 && mise <= props.balance) {
+      if (nombresSelectionnes.length > 0) {
+        props.setBalance(props.balance - mise);
+        setJeuDemarre(true);
+        setInfoVisible(false);
+        setNombreWinner(0);
+        const tableauReset = resetClasses(nombresKeno);
+        setNombresKeno(tableauReset);
 
-      if (prevChiffres.includes(nombre)) {
-        const newChiffres = prevChiffres.filter((num) => num !== nombre);
-        setMaxAtteint(newChiffres.length >= 10);
-        return newChiffres;
+        setTimeout(() => {
+          genererNombreAleatoire(tableauReset);
+        }, 500);
       } else {
-        const newChiffres = [...prevChiffres, nombre];
-        setMaxAtteint(newChiffres.length >= 10);
-        return newChiffres;
+        afficherMessage("Choisissez au moins 1 nombre!", true);
       }
+    } else {
+      afficherMessage("Mise non valide. Veuillez réessayer.", true);
+    }
+  }
+
+  function genererNombreAleatoire(currentKeno: INombreKeno[]) {
+    const nombresUniques: number[] = [];
+    while (nombresUniques.length < 10) {
+      const nombre = Math.floor(Math.random() * 40) + 1;
+      if (!nombresUniques.includes(nombre)) {
+        nombresUniques.push(nombre);
+      }
+    }
+    afficherResultats(nombresUniques, currentKeno);
+  }
+
+  function afficherResultats(
+    nombresAleatoires: number[],
+    currentKeno: INombreKeno[]
+  ) {
+    let delay = 0;
+    let updatedKeno = [...currentKeno];
+
+    nombresAleatoires.forEach((randomNumber, index) => {
+      setTimeout(() => {
+        updatedKeno = updatedKeno.map((n) =>
+          n.value === randomNumber
+            ? { ...n, className: n.isSelected ? "winner" : "loser" }
+            : n
+        );
+        setNombresKeno(updatedKeno);
+
+        if (index === nombresAleatoires.length - 1) {
+          setTimeout(() => {
+            montrerGain(updatedKeno);
+          }, 200);
+        }
+      }, delay);
+
+      delay += 300;
     });
+  }
+
+  function montrerGain(updatedKeno: INombreKeno[]) {
+    const countWinners = updatedKeno.filter(
+      (n) => n.isSelected && n.className === "winner"
+    ).length;
+    setJeuDemarre(false);
+    setNombreWinner(countWinners);
+  }
+
+  function toggleNombreListe(nombre: INombreKeno) {
+    setInfoVisible(false);
+    if (jeuDemarre) {
+      afficherMessage("Attendez la prochaine partie!", true);
+      return;
+    }
+    setNombreWinner(0);
+    const resetKeno = resetClasses(nombresKeno);
+
+    const updatedKeno = resetKeno.map((n) =>
+      n.value === nombre.value
+        ? {
+            ...n,
+            isSelected: !n.isSelected,
+            className: !n.isSelected ? "active" : "",
+          }
+        : n
+    );
+
+    const countSelected = updatedKeno.filter((n) => n.isSelected).length;
+
+    if (countSelected <= 10) {
+      setNombresKeno(updatedKeno);
+      setNombreChiffreChoisi(countSelected);
+    } else {
+      afficherMessage("La limite de 10 chiffres est atteinte!", true);
+    }
+  }
+
+  function afficherMessage(message: string, isError: boolean) {
+    setInfoTexte(message);
+    setInfoVisible(true);
+    setInfoErreur(isError);
   }
 
   return (
     <>
-      <TableauNombres onclick={toggleNombreListe} jeuCommence={jeuCommence} maxAtteint={maxAtteint} />
-      <ChoixUsager setMise={setMise} setJeu={demarrerJeu}/>
-      <div>
-        <h3>Chiffres Choisis Actuellement:</h3>
-        <p>{maxAtteint ? "La limite de 10 chiffres est atteinte!" : ""}</p>
-      </div>
+      <TableauNombres nombresKeno={nombresKeno} onClick={toggleNombreListe} />
+      <ChoixUsager
+        setMise={setMise}
+        setJeu={demarrerJeu}
+        jeuDemarre={jeuDemarre}
+        setDifficulte={setDifficulte}
+        setNombreWinner={setNombreWinner}
+      />
+      <Info text={infoTexte} visible={infovisible} error={infoErreur} />
+      <TableauPaiement
+        difficulte={difficulte}
+        nombreChiffreChoisi={nombreChiffreChoisi}
+        nombreWinner={nombreWinner}
+
+      />
     </>
   );
 }
