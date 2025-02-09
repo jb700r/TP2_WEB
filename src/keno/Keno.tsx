@@ -5,6 +5,7 @@ import { Info } from "../poker/Info";
 import { INombreKeno } from "./NombreKeno";
 import { TableauPaiement } from "./TableauPaiement";
 import { low, medium, high } from "./Data";
+import { PayoutTable } from "./Data";
 
 interface KenoProps {
   balance: number;
@@ -92,16 +93,16 @@ export function Keno(props: KenoProps) {
         }
       }, delay);
 
-      delay += 300;
+      delay += 250;
     });
   }
 
-  function montrerGain(updatedKeno: INombreKeno[]) {
+  function montrerGain(updatedKeno: INombreKeno[]): void {
     const countWinners = updatedKeno.filter(
       (n) => n.isSelected && n.className === "winner"
     ).length;
-
-    let data;
+  
+    let data: PayoutTable | null = null;
     if (difficulte === "low") {
       data = low;
     } else if (difficulte === "medium") {
@@ -109,17 +110,17 @@ export function Keno(props: KenoProps) {
     } else if (difficulte === "high") {
       data = high;
     }
-    console.log("winner:" + countWinners);
-
-    console.log("data:" + data[nombreChiffreChoisi][countWinners]);
-
-    props.setBalance((prevBalance) => prevBalance + (mise * data[nombreChiffreChoisi][countWinners]));
-
-    console.log("props balance" + props.balance)
-
+  
+    if (data && data[nombreChiffreChoisi] && data[nombreChiffreChoisi][countWinners] !== undefined) {
+      const gain = (mise * data[nombreChiffreChoisi][countWinners]) - mise;
+      const nouvelleBalance = props.balance + gain;
+      props.setBalance(nouvelleBalance);
+    }
+  
     setJeuDemarre(false);
     setNombreWinner(countWinners);
   }
+  
 
   function toggleNombreListe(nombre: INombreKeno) {
     setInfoVisible(false);
@@ -139,9 +140,7 @@ export function Keno(props: KenoProps) {
           }
         : n
     );
-
     const countSelected = updatedKeno.filter((n) => n.isSelected).length;
-
     if (countSelected <= 10) {
       setNombresKeno(updatedKeno);
       setNombreChiffreChoisi(countSelected);
