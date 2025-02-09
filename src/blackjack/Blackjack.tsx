@@ -30,8 +30,8 @@ export function Blackjack(props: IBalanceData) {
 
   const dosCarte: string = "https://deckofcardsapi.com/static/img/back.png";
 
-  let scoreCroupier: number = 0;
-  scoreCroupier = calculateScore(cartesCroupier);
+  // let scoreCroupier: number = 0;
+  // scoreCroupier = calculateScore(cartesCroupier);
   let scoreJoueur: number = 0;
   scoreJoueur = calculateScore(cartesJoueur);
 
@@ -63,10 +63,9 @@ export function Blackjack(props: IBalanceData) {
     let carteActuelle: ICarteData[] = [...cartesCroupier];
     let scoreCroupier: number = calculateScore(carteActuelle);
 
-    let winnings: number = mise*2;
+    let winnings: number = mise * 2;
 
-    p_isdoubled ? winnings*=2 : winnings;
-
+    p_isdoubled ? (winnings *= 2) : winnings;
 
     while (scoreCroupier < 17 && jeuDeCarteId && winner == EnumWinner.null) {
       const newCard = await tirerCarte(jeuDeCarteId);
@@ -78,19 +77,19 @@ export function Blackjack(props: IBalanceData) {
       console.log("scoreCroupier:", scoreCroupier);
       console.log("scoreJoueur:", scoreJoueur);
     }
-    if ((scoreCroupier > scoreMax ) || (scoreJoueur > scoreCroupier && scoreJoueur <= scoreMax)) {
+    if (
+      scoreCroupier > scoreMax ||
+      (scoreJoueur > scoreCroupier && scoreJoueur <= scoreMax)
+    ) {
       setBalance(props.balance + winnings);
       setWinner(EnumWinner.Joueur);
-    }
-    else if (scoreCroupier >= 17 && scoreJoueur === scoreCroupier) {
+    } else if (scoreCroupier >= 17 && scoreJoueur === scoreCroupier) {
       setBalance(props.balance + mise);
       setWinner(EnumWinner.Egalité);
     } else {
       setWinner(EnumWinner.Croupier);
     }
   }
-
-
 
   async function hit() {
     let carteActuelle = [...cartesJoueur];
@@ -114,18 +113,14 @@ export function Blackjack(props: IBalanceData) {
   //   await Stay(true);
   // }
 
-
-
-
   async function initPartie() {
     setCarteCaché(false);
     setWinner(EnumWinner.null);
     setCartesCroupier([]);
     setCartesJoueur([]);
-    
-    console.log("balance: "+props.balance)
-    console.log("mise : " + mise)
 
+    console.log("balance: " + props.balance);
+    console.log("mise : " + mise);
 
     let btn = document.getElementById("demarrer-partie");
     jeuDeCarteId ? await shuffleDecks() : await recupererJeuDeCarte();
